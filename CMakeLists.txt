@@ -17,20 +17,9 @@ project(external_package_experiment)
 # 
 # if you leave them in here, then you are relying on their builds to be well behaved.
 
-# confifure top level cmake for deps
-execute_process(
-    COMMAND ${CMAKE_COMMAND} 
-    -S ${CMAKE_SOURCE_DIR}/deps 
-    -B ${CMAKE_BINARY_DIR}/deps
-    -D CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-)
-
-# build and install all deps
-execute_process(
-    COMMAND ${CMAKE_COMMAND}
-    --build ${CMAKE_BINARY_DIR}/deps
-    --config ${CMAKE_BUILD_TYPE}
-)
+# confifure top level cmake for deps, then build and install all deps
+execute_process(COMMAND ${CMAKE_COMMAND} -S ${CMAKE_SOURCE_DIR}/deps -B ${CMAKE_BINARY_DIR}/deps -D CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE})
+execute_process(COMMAND ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR}/deps --config ${CMAKE_BUILD_TYPE})
 
 # append the install path of all deps...
 # there is some magic here that the names picked should match
