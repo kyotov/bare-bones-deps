@@ -9,10 +9,9 @@ FetchContent_Declare(kydep_bootstrap
 )
 FetchContent_MakeAvailable(kydep_bootstrap)
 
-# use custom CMakeLists.txt for deps
-# KyDeps("${CMAKE_SOURCE_DIR}/deps" glog gflags)
-
-# use the default CMakeLists.txt for deps
+# use custom CMakeLists.txt for deps:
+#   KyDeps("${CMAKE_SOURCE_DIR}/deps" glog gflags)
+# use the default CMakeLists.txt for deps:
 KyDeps("" glog gflags)
 
 # not sure if we want to "automate" the below...
