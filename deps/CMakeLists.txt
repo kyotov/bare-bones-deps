@@ -1,10 +1,8 @@
 cmake_minimum_required(VERSION 3.20)
 project(deps)
 
-include(kydep.cmake)
+include(kydep)
 
-# definitions
+# definitions -- can be includes or pastes
 include(glog)
 include(gflags)
-
-# message(STATUS "${KYDEPS_CONTEXT}")
