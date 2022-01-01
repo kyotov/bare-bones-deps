@@ -1,24 +1,45 @@
 cmake_minimum_required(VERSION 3.20)
 project(external_package_experiment)
 
-# kydep bootstrap
+# ==============================================================================
+# STEP 1: declare which dependencies we want
+set(KYDEPS gflags glog)
+
+# ==============================================================================
+# STEP 2: invoke kydeps to include them (and potentially build them)
+#
+# NOTE: There are three different modes supported for step 2.
+#
+# ------------------------------------------------------------------------------
+# Mode 1: To use a local CMakeLists.txt in a directory of the root repo,
+#         without consuming any provided definitions directly, 
+#         uncomment the following line:
+#
+# add_subdirectory(kydeps-nodefs)
+# ------------------------------------------------------------------------------
+# Mode 2: To use a git submodule to import provided definitions,
+#         uncomment the following line:
+#
+# add_subdirectory(kydeps)
+# ------------------------------------------------------------------------------
+# Mode 3: To use FetchContent to import provided definitons,
+#         uncomment the following lines:
+#
 include(FetchContent)
-FetchContent_Declare(kydep_bootstrap
-    GIT_REPOSITORY https://github.com/kyotov/kydep-bootstrap.git
-    GIT_TAG main # this should really be a hash in each real project
+FetchContent_Declare(kydeps
+    GIT_REPOSITORY https://github.com/kyotov/kydep-definitions.git
+    GIT_TAG 94d2d4c5c853b790aa4df753b50952a690d20623 # rejigger
 )
-FetchContent_MakeAvailable(kydep_bootstrap)
+FetchContent_MakeAvailable(kydeps)
 
-# use custom CMakeLists.txt for deps:
-#   KyDeps("${CMAKE_SOURCE_DIR}/deps" glog gflags)
-# use the default CMakeLists.txt for deps:
-KyDeps("" glog gflags)
+# ==============================================================================
+# STEP 3: consume the necessary dependencies
+find_package(gflags REQUIRED CONFIG)
+find_package(glog REQUIRED CONFIG)
 
-# not sure if we want to "automate" the below...
-find_package(gflags REQUIRED NO_MODULE)
-find_package(glog REQUIRED NO_MODULE)
+# ==============================================================================
+# STEP 4: continue business as usual (using the consumed dependencies)
 
-# a simple executable that uses both
 add_executable(main main.cc)
 target_link_libraries(main 
     PRIVATE gflags
