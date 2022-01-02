@@ -9,7 +9,7 @@ if (NOT (CMAKE_SOURCE_DIR STREQUAL DEPS_SOURCE_DIR))
     include(FetchContent)
     FetchContent_Declare(kydep_bootstrap
         GIT_REPOSITORY https://github.com/kyotov/kydep-bootstrap.git
-        GIT_TAG v1.0
+        GIT_TAG v2
     )
     FetchContent_MakeAvailable(kydep_bootstrap)
     set(CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH}" PARENT_SCOPE)
