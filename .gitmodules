@@ -1,8 +1,4 @@
-[submodule "kydeps"]
-	path = kydeps
-	url = https://github.com/kyotov/kydep-definitions.git
-	branch = v2
 [submodule "mode-2/kydeps"]
 	path = mode-2/kydeps
 	url = https://github.com/kyotov/kydep-definitions.git
-	branch = main
+	branch = v2
