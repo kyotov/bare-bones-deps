@@ -9,7 +9,7 @@ if (NOT (CMAKE_SOURCE_DIR STREQUAL DEPS_SOURCE_DIR))
     include(FetchContent)
     FetchContent_Declare(kydep_bootstrap
         GIT_REPOSITORY https://github.com/kyotov/kydep-bootstrap.git
-        GIT_TAG rejigger
+        GIT_TAG v1.0
     )
     FetchContent_MakeAvailable(kydep_bootstrap)
     set(CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH}" PARENT_SCOPE)
@@ -40,4 +40,9 @@ KyDep(glog
     -DBUILD_TESTING=FALSE
 
     ${DEPENDS_ON_gflags}
+)
+
+KyDep(GTest
+    GIT_REPOSITORY https://github.com/google/googletest.git
+    GIT_TAG e2239ee6043f73722e7aa812a459f54a28552929 # 1.11.0
 )

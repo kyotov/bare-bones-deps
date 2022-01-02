@@ -3,7 +3,7 @@ project(external_package_experiment)
 
 # ==============================================================================
 # STEP 1: declare which dependencies we want
-set(KYDEPS gflags glog)
+set(KYDEPS gflags glog GTest)
 
 # ==============================================================================
 # STEP 2: invoke kydeps to include them (and potentially build them)
@@ -28,7 +28,7 @@ add_subdirectory(kydeps-nodefs)
 # include(FetchContent)
 # FetchContent_Declare(kydeps
 #     GIT_REPOSITORY https://github.com/kyotov/kydep-definitions.git
-#     GIT_TAG rejigger
+#     GIT_TAG v1.0
 # )
 # FetchContent_MakeAvailable(kydeps)
 
@@ -36,12 +36,19 @@ add_subdirectory(kydeps-nodefs)
 # STEP 3: consume the necessary dependencies
 find_package(gflags REQUIRED CONFIG)
 find_package(glog REQUIRED CONFIG)
+find_package(GTest REQUIRED CONFIG)
 
 # ==============================================================================
 # STEP 4: continue business as usual (using the consumed dependencies)
 
-add_executable(main main.cc)
-target_link_libraries(main 
+add_executable(tests test.cc)
+target_link_libraries(tests
     PRIVATE gflags
     PRIVATE glog::glog
+    PRIVATE GTest::gtest
+    PRIVATE GTest::gtest_main
 )
+
+include(CTest)
+include(GoogleTest)
+gtest_discover_tests(tests)
