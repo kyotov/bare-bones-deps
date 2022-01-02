@@ -1,12 +1,10 @@
 cmake_minimum_required(VERSION 3.20)
 project(external_package_experiment)
 
-set(KYDEPS gflags glog GTest)
-
 include(FetchContent)
 FetchContent_Declare(kydeps
     GIT_REPOSITORY https://github.com/kyotov/kydep-definitions.git
-    GIT_TAG v1.0
+    GIT_TAG v2
 )
 FetchContent_MakeAvailable(kydeps)
 
