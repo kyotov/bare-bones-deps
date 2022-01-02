@@ -2,28 +2,22 @@ cmake_minimum_required(VERSION 3.20)
 project(external_package_experiment)
 
 # ==============================================================================
-# STEP 1: declare which dependencies we want
+# STEP 1: Declare which dependencies we want
 set(KYDEPS gflags glog GTest)
 
 # ==============================================================================
-# STEP 2: invoke kydeps to include them (and potentially build them)
-#
-# NOTE: There are three different modes supported for step 2.
+# STEP 2: Invoke kydeps to include them (and potentially build them).
+#         There are currently three different modes for this supported (below)
 #
 # ------------------------------------------------------------------------------
 # Mode 1: To use a local CMakeLists.txt in a directory of the root repo,
-#         without consuming any provided definitions directly, 
-#         uncomment the following line:
+#         without consuming any provided definitions directly (see mode-1 dir)
 #
-# add_subdirectory(kydeps-nodefs)
 # ------------------------------------------------------------------------------
-# Mode 2: To use a git submodule to import provided definitions,
-#         uncomment the following line:
+# Mode 2: To use a git submodule to import provided definitions (see mode-2 dir)
 #
-# add_subdirectory(kydeps)
 # ------------------------------------------------------------------------------
-# Mode 3: To use FetchContent to import provided definitons,
-#         uncomment the following lines:
+# Mode 3: To use FetchContent to import provided definitons (this case)
 #
 include(FetchContent)
 FetchContent_Declare(kydeps
