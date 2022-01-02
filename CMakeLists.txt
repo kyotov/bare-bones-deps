@@ -15,7 +15,7 @@ set(KYDEPS gflags glog GTest)
 #         without consuming any provided definitions directly, 
 #         uncomment the following line:
 #
-add_subdirectory(kydeps-nodefs)
+# add_subdirectory(kydeps-nodefs)
 # ------------------------------------------------------------------------------
 # Mode 2: To use a git submodule to import provided definitions,
 #         uncomment the following line:
@@ -25,12 +25,12 @@ add_subdirectory(kydeps-nodefs)
 # Mode 3: To use FetchContent to import provided definitons,
 #         uncomment the following lines:
 #
-# include(FetchContent)
-# FetchContent_Declare(kydeps
-#     GIT_REPOSITORY https://github.com/kyotov/kydep-definitions.git
-#     GIT_TAG v1.0
-# )
-# FetchContent_MakeAvailable(kydeps)
+include(FetchContent)
+FetchContent_Declare(kydeps
+    GIT_REPOSITORY https://github.com/kyotov/kydep-definitions.git
+    GIT_TAG v1.0
+)
+FetchContent_MakeAvailable(kydeps)
 
 # ==============================================================================
 # STEP 3: consume the necessary dependencies
