@@ -4,12 +4,14 @@
 cmake_minimum_required(VERSION 3.20)
 project(kydeps)
 if (CMAKE_SOURCE_DIR STREQUAL kydeps_SOURCE_DIR)
+    list(APPEND CMAKE_MESSAGE_INDENT "[BUILD]")
     include(kydep)
 else()
+    list(APPEND CMAKE_MESSAGE_INDENT "[KYDEPS]")
     include(FetchContent)
     FetchContent_Declare(kydep_bootstrap
         GIT_REPOSITORY https://github.com/kyotov/kydep-bootstrap.git
-        GIT_TAG v2
+        GIT_TAG v2.1
     )
     FetchContent_MakeAvailable(kydep_bootstrap)
 endif()
@@ -35,7 +37,7 @@ KyDep(glog
     CMAKE_ARGS
     -DBUILD_TESTING=FALSE
 
-    ${DEPENDS_ON_gflags}
+    ${gflags_DEPENDENCY}
 )
 
 KyDep(GTest
