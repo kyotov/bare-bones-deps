@@ -1,13 +1,13 @@
 cmake_minimum_required(VERSION 3.20)
 project(external_package_experiment)
 
-# add_subdirectory(mode-3/kydeps)
-include(FetchContent)
-FetchContent_Declare(kydeps
-    GIT_REPOSITORY https://github.com/kyotov/kydep-definitions.git
-    GIT_TAG v2.1
-)
-FetchContent_MakeAvailable(kydeps)
+add_subdirectory(mode-1a/kydeps)
+# include(FetchContent)
+# FetchContent_Declare(kydeps
+#     GIT_REPOSITORY https://github.com/kyotov/kydep-definitions.git
+#     GIT_TAG v2.1
+# )
+# FetchContent_MakeAvailable(kydeps)
 
 find_package(gflags REQUIRED CONFIG)
 find_package(glog REQUIRED CONFIG)
