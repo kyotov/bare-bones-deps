@@ -17,6 +17,10 @@ endif()
 # ===== [END] KyDeps CMakeLists.txt preamble ===================================
 # ==============================================================================
 
+set(KYDEPS_CACHE_DIR "${kydeps_SOURCE_DIR}/../cache")
+set(KYDEPS_CACHE_LOOKUP ON)
+set(KYDEPS_CACHE_UPDATE ON)
+
 KyDep(gflags
     GIT_REPOSITORY https://github.com/gflags/gflags.git
     GIT_TAG f8a0efe03aa69b3336d8e228b37d4ccb17324b88 # v2.2.0
