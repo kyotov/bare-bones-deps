@@ -19,8 +19,7 @@ endif()
 # ==============================================================================
 
 include("cache.cmake")
-set(KYDEPS_CACHE_LOOKUP ON)
-set(KYDEPS_CACHE_UPDATE ON)
+set(KYDEPS_CACHE ON)
 set(KYDEPS_BUILD OFF)
 
 KyDep(gflags

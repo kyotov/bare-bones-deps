@@ -18,8 +18,7 @@ endif()
 # ==============================================================================
 
 set(KYDEPS_CACHE_DIR "${kydeps_SOURCE_DIR}/../cache")
-set(KYDEPS_CACHE_LOOKUP ON)
-set(KYDEPS_CACHE_UPDATE ON)
+set(KYDEPS_CACHE ON)
 
 KyDep(gflags
     GIT_REPOSITORY https://github.com/gflags/gflags.git
