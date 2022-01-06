@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.20)
 project(external_package_experiment)
 
-add_subdirectory(mode-1a/kydeps)
+add_subdirectory(mode-1b/kydeps)
 # include(FetchContent)
 # FetchContent_Declare(kydeps
 #     GIT_REPOSITORY https://github.com/kyotov/kydep-definitions.git

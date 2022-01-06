@@ -88,7 +88,7 @@ with section("format"):
   line_ending = 'unix'
 
   # Format command names consistently as 'lower' or 'upper' case
-  command_case = 'canonical'
+  command_case = 'unchanged'
 
   # Format keywords consistently as 'lower' or 'upper' case
   keyword_case = 'unchanged'
@@ -167,10 +167,10 @@ with section("lint"):
   disabled_codes = []
 
   # regular expression pattern describing valid function names
-  function_pattern = '[0-9a-z_]+'
+  function_pattern = '[0-9A-Za-z_]+'
 
   # regular expression pattern describing valid macro names
-  macro_pattern = '[0-9A-Z_]+'
+  macro_pattern = '[0-9A-Za-z_]+'
 
   # regular expression pattern describing valid names for variables with global
   # (cache) scope
