@@ -3,7 +3,6 @@
 #
 cmake_minimum_required(VERSION 3.20)
 project(kydeps)
-set(CMAKE_MESSAGE_CONTEXT_SHOW ON)
 if (CMAKE_SOURCE_DIR STREQUAL kydeps_SOURCE_DIR)
     include(kydep)
 else()
@@ -17,12 +16,6 @@ endif()
 #
 # ===== [END] KyDeps CMakeLists.txt preamble ===================================
 # ==============================================================================
-
-include("cache.cmake")
-set(KYDEPS_CACHE OFF)
-set(KYDEPS_BUILD ON)
-
-set(KYDEPS_BUILD_TESTS FALSE)
 
 KyDep(gflags
     GIT_REPOSITORY https://github.com/gflags/gflags.git

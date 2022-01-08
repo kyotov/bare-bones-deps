@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.20)
 project(external_package_experiment)
 
+set(KYDEPS_CACHE ON)
+set(KYDEPS_LOG_LEVEL VERBOSE)
 add_subdirectory(mode-1b/kydeps)
 # include(FetchContent)
 # FetchContent_Declare(kydeps

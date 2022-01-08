@@ -1,6 +1,3 @@
-set(KYDEPS_CACHE_BUCKET "https://kydeps.nyc3.digitaloceanspaces.com")
-
-
 #  MANIFEST[gflags]
 #  ----------
 #  CMAKE_BUILD_TYPE=Debug

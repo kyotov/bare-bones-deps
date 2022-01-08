@@ -1,7 +1,32 @@
 version: 2.1
-orbs:
-    hello: circleci/hello-build@0.0.5
+
+jobs:
+  build-examples:
+    docker:
+      - image: kyotov/kydeps:latest
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD
+    parameters:
+      source-dir:
+        default: "~/src"
+        type: string
+      binary-dir:
+        default: "~/build"
+        type: string
+    working_directory: <<parameters.source-dir>>
+    steps:
+      - checkout
+      - run: mkdir <<parameters.binary-dir>>
+      - run: cd <<parameters.binary-dir>> && cmake -S <<parameters.source-dir>> -B . -D CMAKE_BUILD_TYPE=Debug
+      - run: cd <<parameters.binary-dir>> && cmake --build . --config Debug
+      - run: cd <<parameters.binary-dir>> && ./tests
+      - store_artifacts:
+          path: <<parameters.binary-dir>>/c
+
 workflows:
-    "Hello Workflow":
-        jobs:
-          - hello/hello-build
+  main:
+    jobs:
+      - build-examples:
+          source-dir: "~/src"
+          # binary-dir: "~/build"
