@@ -19,8 +19,10 @@ endif()
 # ==============================================================================
 
 include("cache.cmake")
-set(KYDEPS_CACHE ON)
-set(KYDEPS_BUILD OFF)
+set(KYDEPS_CACHE OFF)
+set(KYDEPS_BUILD ON)
+
+set(KYDEPS_BUILD_TESTS FALSE)
 
 KyDep(gflags
     GIT_REPOSITORY https://github.com/gflags/gflags.git
@@ -30,7 +32,7 @@ KyDep(gflags
     -DREGISTER_INSTALL_PREFIX=FALSE
     -DGFLAGS_BUILD_STATIC_LIBS=TRUE
     -DGFLAGS_BUILD_SHARED_LIBS=FALSE
-    -DGFLAGS_BUILD_TESTING=FALSE    
+    -DGFLAGS_BUILD_TESTING=${KYDEPS_BUILD_TESTS}    
 )
 
 KyDep(glog
@@ -38,7 +40,7 @@ KyDep(glog
     GIT_TAG 96a2f23dca4cc7180821ca5f32e526314395d26a # v0.4.0
 
     CMAKE_ARGS
-    -DBUILD_TESTING=FALSE
+    -DBUILD_TESTING=${KYDEPS_BUILD_TESTS}
 
     ${gflags_DEPENDENCY}
 )
