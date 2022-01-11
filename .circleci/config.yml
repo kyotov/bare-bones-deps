@@ -1,7 +1,27 @@
 version: 2.1
 
+commands:
+  build-one:
+    parameters:
+      source-dir:
+        default: "~/src"
+        type: string
+      binary-dir:
+        default: "~/build"
+        type: string
+      extra-parameters:
+        default: ""
+        type: string
+    steps:
+      - run: cd <<parameters.source-dir>> && git submodule update --init --recursive
+      - run: mkdir -p <<parameters.binary-dir>>
+      - run: cd <<parameters.binary-dir>> && cmake -S <<parameters.source-dir>> -B . -D CMAKE_BUILD_TYPE=Debug <<parameters.extra-parameters>>
+      - run: cd <<parameters.binary-dir>> && cmake --build . --config Debug
+      - run: cd <<parameters.binary-dir>> && ./tests
+
 jobs:
-  build-examples:
+
+  build-simple:
     docker:
       - image: kyotov/kydeps:latest
         auth:
@@ -14,19 +34,62 @@ jobs:
       binary-dir:
         default: "~/build"
         type: string
-    working_directory: <<parameters.source-dir>>
+    working_directory: "~/src"
     steps:
       - checkout
-      - run: mkdir <<parameters.binary-dir>>
-      - run: cd <<parameters.binary-dir>> && cmake -S <<parameters.source-dir>> -B . -D CMAKE_BUILD_TYPE=Debug
-      - run: cd <<parameters.binary-dir>> && cmake --build . --config Debug
-      - run: cd <<parameters.binary-dir>> && ./tests
-      - store_artifacts:
-          path: <<parameters.binary-dir>>/c
+      - build-one:
+          source-dir: <<parameters.source-dir>>
+          binary-dir: <<parameters.binary-dir>>
+
+  build-and-persist:
+    docker:
+      - image: kyotov/kydeps:latest
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD
+    working_directory: "~/src"
+    steps:
+      - checkout
+      - build-one:
+          source-dir: "~/src/mode-3"
+          binary-dir: "~/build"
+          extra-parameters: "-D KYDEPS_CACHE=ON"
+      - persist_to_workspace:
+          root: "~/build"
+          paths: c/*
+  
+  test:
+    docker:
+      - image: kyotov/kydeps:latest
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD
+    working_directory: "~/src"
+    steps:
+      - checkout
+      - attach_workspace:
+          at: /tmp/bucket
+      - run: find /tmp/bucket
+      - run: cp /tmp/bucket/c/cache.cmake ~/src/mode-1b/kydeps/cache.cmake
+      - build-one:
+          source-dir: "~/src/mode-1b"
+          binary-dir: "~/build"
+          extra-parameters: "--log-level DEBUG -D KYDEPS_CACHE=ON -D KYDEPS_BUILD=OFF -D KYDEPS_CACHE_BUCKET=file:///tmp/bucket/c -D KYDEPS_LOG_LEVEL=DEBUG"
 
 workflows:
   main:
     jobs:
-      - build-examples:
-          source-dir: "~/src"
-          # binary-dir: "~/build"
+      - build-simple:
+          source-dir: "~/src/mode-1b"
+          binary-dir: "~/build/mode-1b"
+      - build-simple:
+          source-dir: "~/src/mode-2"
+          binary-dir: "~/build/mode-2"
+      - build-simple:
+          source-dir: "~/src/mode-3"
+          binary-dir: "~/build/mode-3"
+      - build-and-persist
+      - test:
+          requires: 
+            - build-and-persist
+
