@@ -1,5 +1,13 @@
 version: 2.1
 
+executors:
+  kydeps-executor:
+    docker:
+      - image: kyotov/kydeps:latest
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD
+          
 commands:
   build-one:
     parameters:
@@ -22,17 +30,16 @@ commands:
 jobs:
 
   build-simple:
-    docker:
-      - image: kyotov/kydeps:latest
-        auth:
-          username: mydockerhub-user
-          password: $DOCKERHUB_PASSWORD
+    executor: kydeps-executor
     parameters:
       source-dir:
         default: "~/src"
         type: string
       binary-dir:
         default: "~/build"
+        type: string
+      extra-parameters:
+        default: ""
         type: string
     working_directory: "~/src"
     steps:
@@ -42,11 +49,7 @@ jobs:
           binary-dir: <<parameters.binary-dir>>
 
   build-and-persist:
-    docker:
-      - image: kyotov/kydeps:latest
-        auth:
-          username: mydockerhub-user
-          password: $DOCKERHUB_PASSWORD
+    executor: kydeps-executor
     working_directory: "~/src"
     steps:
       - checkout
@@ -55,41 +58,46 @@ jobs:
           binary-dir: "~/build"
           extra-parameters: "-D KYDEPS_CACHE=ON"
       - persist_to_workspace:
-          root: "~/build"
-          paths: c/*
+          root: "~/build/c"
+          paths: "*"
   
-  test:
-    docker:
-      - image: kyotov/kydeps:latest
-        auth:
-          username: mydockerhub-user
-          password: $DOCKERHUB_PASSWORD
+  build-by-reuse:
+    executor: kydeps-executor
     working_directory: "~/src"
     steps:
       - checkout
       - attach_workspace:
           at: /tmp/bucket
       - run: find /tmp/bucket
-      - run: cp /tmp/bucket/c/cache.cmake ~/src/mode-1b/kydeps/cache.cmake
+      - run: cp /tmp/bucket/cache.cmake ~/src/mode-1/kydeps/cache.cmake
       - build-one:
-          source-dir: "~/src/mode-1b"
-          binary-dir: "~/build"
-          extra-parameters: "--log-level DEBUG -D KYDEPS_CACHE=ON -D KYDEPS_BUILD=OFF -D KYDEPS_CACHE_BUCKET=file:///tmp/bucket/c -D KYDEPS_LOG_LEVEL=DEBUG"
+          source-dir: "~/src/mode-1"
+          extra-parameters: "--log-level DEBUG -D KYDEPS_CACHE=ON -D KYDEPS_BUILD=OFF -D KYDEPS_CACHE_BUCKET=file:///tmp/bucket -D KYDEPS_LOG_LEVEL=DEBUG"
 
 workflows:
-  main:
+
+  simple:
     jobs:
       - build-simple:
-          source-dir: "~/src/mode-1b"
-          binary-dir: "~/build/mode-1b"
+          source-dir: "~/src/mode-1"
       - build-simple:
           source-dir: "~/src/mode-2"
-          binary-dir: "~/build/mode-2"
       - build-simple:
           source-dir: "~/src/mode-3"
-          binary-dir: "~/build/mode-3"
+
+  remote:
+    jobs:
       - build-and-persist
-      - test:
+      - build-by-reuse:
           requires: 
             - build-and-persist
 
+  all:
+    jobs:
+      - hold:
+          type: approval
+      - build-simple:
+          source-dir: ~/src
+          extra-parameters: "-D KYDEPS_TARGETS=all"
+          requires:
+            - hold
