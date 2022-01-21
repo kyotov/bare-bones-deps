@@ -104,8 +104,8 @@ workflows:
       #       - hold
       - build-simple:
           name: gflags
-          source-dir: "~/src/mode-1"
-          extra-parameters: "-D KYDEPS_BUILD_ONE_ENABLED=ON -D KYDEPS_TARGETS=gflags"
+          source-dir: "~/src/mode-dist-build"
+          extra-parameters: "-D KYDEPS_TARGETS=gflags"
           requires: 
             - hold
             
