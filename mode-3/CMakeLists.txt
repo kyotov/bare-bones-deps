@@ -4,7 +4,7 @@ project(external_package_experiment)
 include(FetchContent)
 FetchContent_Declare(kydeps
     GIT_REPOSITORY https://github.com/kyotov/kydep-definitions.git
-    GIT_TAG v2
+    GIT_TAG v2.1
 )
 FetchContent_MakeAvailable(kydeps)
 
