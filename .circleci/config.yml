@@ -19,7 +19,8 @@ jobs:
     working_directory: "~/src"
     steps:
       - checkout
-      - run: cat ~/src/.circleci/universe.yml > universe.yml
+      - run: cd ~/src && git submodule update --init --recursive
+      - run: cmake -S ~/src/mode-2/kydeps -D KYDEPS_CI_UNIVERSE_CONFIGURE=ON
       - continuation/continue:
           configuration_path: universe.yml
 

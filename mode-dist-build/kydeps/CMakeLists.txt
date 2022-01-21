@@ -1,31 +1,19 @@
 # ==============================================================================
 # ===== [BEGIN] KyDeps CMakeLists.txt preamble ===== !!! DO NOT EDIT !!! =======
 #
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.22)
 project(kydeps)
-if (CMAKE_SOURCE_DIR STREQUAL kydeps_SOURCE_DIR AND NOT KYDEPS_UNIVERSE_BUILD)
-    include(kydep)
-else()
-    include(FetchContent)
-    FetchContent_Declare(kydep_bootstrap
-        GIT_REPOSITORY https://github.com/kyotov/kydep-bootstrap.git
-        GIT_TAG v2.3
-    )
-    FetchContent_MakeAvailable(kydep_bootstrap)
-endif()
+include(FetchContent)
+FetchContent_Declare(kydep_bootstrap
+    GIT_REPOSITORY https://github.com/kyotov/kydep-bootstrap.git
+    GIT_TAG v2.4
+)
+FetchContent_MakeAvailable(kydep_bootstrap)
 #
 # ===== [END] KyDeps CMakeLists.txt preamble ===================================
 # ==============================================================================
 
-set(KYDEPS_BUILD_ONE_ENABLED ON)
-
-set(KYDEPS_CACHE_BUCKET "file://${KYDEPS_CACHE_DIR}")
-
-file(GLOB KYDEPS_PACKAGES "${KYDEPS_CACHE_DIR}/*.cmake")
-message(STATUS "${KYDEPS_PACKAGES}")
-foreach(KYDEPS_PACKAGE ${KYDEPS_PACKAGES})
-    include(${KYDEPS_PACKAGE})
-endforeach()
+IncludeGlob("${KYDEPS_CACHE_DIR}/*.cmake")
     
 KyDep(gflags
     GIT_REPOSITORY https://github.com/gflags/gflags.git
