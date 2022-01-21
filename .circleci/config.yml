@@ -96,8 +96,16 @@ workflows:
     jobs:
       - hold:
           type: approval
+      # - build-simple:
+      #     source-dir: ~/src
+      #     extra-parameters: "-D KYDEPS_TARGETS=all"
+      #     requires:
+      #       - hold
       - build-simple:
-          source-dir: ~/src
-          extra-parameters: "-D KYDEPS_TARGETS=all"
-          requires:
+          description: "gflags"
+          source-dir: "~/src/mode-1"
+          extra-parameters: "-D KYDEPS_BUILD_ONE_ENABLED=ON -D KYDEPS_TARGETS=gflags"
+          requires: 
             - hold
+            
+
