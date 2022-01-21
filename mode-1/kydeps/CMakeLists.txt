@@ -8,8 +8,9 @@ if (CMAKE_SOURCE_DIR STREQUAL kydeps_SOURCE_DIR)
 else()
     include(FetchContent)
     FetchContent_Declare(kydep_bootstrap
-        GIT_REPOSITORY https://github.com/kyotov/kydep-bootstrap.git
-        GIT_TAG v2.1
+        # GIT_REPOSITORY https://github.com/kyotov/kydep-bootstrap.git
+        GIT_REPOSITORY /Users/kamen/kydep-bootstrap/.git
+        GIT_TAG v2.3
     )
     FetchContent_MakeAvailable(kydep_bootstrap)
 endif()
