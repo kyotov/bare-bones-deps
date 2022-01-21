@@ -1,0 +1,91 @@
+version: 2.1
+
+executors:
+  kydeps-executor:
+    docker:
+      - image: kyotov/kydeps:latest
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD
+
+jobs:
+
+  build-status:
+    executor: kydeps-executor
+    working_directory: "~/src"
+    steps:
+      - attach_workspace:
+          at: /tmp/cache
+      - run: find /tmp/cache
+
+  build-package:
+    executor: kydeps-executor
+    parameters:
+      package-name:
+        type: string
+      source-dir:
+        default: "~/src/mode-dist-build/kydeps"
+        type: string
+      binary-dir:
+        default: "~/build"
+        type: string
+    working_directory: "~/src"
+    steps:
+      - attach_workspace:
+          at: /tmp/cache
+      - run: find /tmp/cache
+      - checkout
+      - run: cd <<parameters.source-dir>> && git submodule update --init --recursive
+      - run: mkdir -p <<parameters.binary-dir>>
+      - run: |
+          cd <<parameters.binary-dir>> && 
+          cmake \
+            -S <<parameters.source-dir>> \
+            -B . \
+            -D CMAKE_BUILD_TYPE=Debug \
+            -D KYDEPS_TARGETS=<<parameters.package-name>> \
+            -D KYDEPS_CACHE_DIR=/tmp/cache \
+            -D KYDEPS_UNIVERSE_BUILD=ON
+      - run: cp <<parameters.binary-dir>>/c/cache.cmake <<parameters.binary-dir>>/c/<<parameters.package-name>>.cmake
+      - run: find <<parameters.binary-dir>>/c  
+      - persist_to_workspace:
+          root: "<<parameters.binary-dir>>/c"
+          paths: "<<parameters.package-name>>.*"
+
+workflows:
+  distributed-build:
+    jobs:
+      - hold:
+          type: approval
+      - build-status:
+          name: start
+          # requires:
+          #   - hold
+      - build-package:
+          name: gflags
+          package-name: gflags
+          requires: 
+            - start
+      - build-package:
+          name: glog
+          package-name: glog
+          requires:
+            - start
+            - gflags
+      - build-package:
+          name: GTest
+          package-name: GTest
+          requires:
+            - start
+      - build-package:
+          name: fmt
+          package-name: fmt
+          requires:
+            - start
+      - build-status:
+          name: end
+          requires:
+            - gflags
+            - glog
+            - GTest
+            - fmt

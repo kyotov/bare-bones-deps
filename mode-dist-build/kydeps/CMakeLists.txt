@@ -3,7 +3,7 @@
 #
 cmake_minimum_required(VERSION 3.20)
 project(kydeps)
-if (CMAKE_SOURCE_DIR STREQUAL kydeps_SOURCE_DIR)
+if (CMAKE_SOURCE_DIR STREQUAL kydeps_SOURCE_DIR AND NOT KYDEPS_UNIVERSE_BUILD)
     include(kydep)
 else()
     include(FetchContent)
@@ -17,8 +17,16 @@ endif()
 # ===== [END] KyDeps CMakeLists.txt preamble ===================================
 # ==============================================================================
 
-include(cache.cmake)
+set(KYDEPS_BUILD_ONE_ENABLED ON)
 
+set(KYDEPS_CACHE_BUCKET "file://${KYDEPS_CACHE_DIR}")
+
+file(GLOB KYDEPS_PACKAGES "${KYDEPS_CACHE_DIR}/*.cmake")
+message(STATUS "${KYDEPS_PACKAGES}")
+foreach(KYDEPS_PACKAGE ${KYDEPS_PACKAGES})
+    include(${KYDEPS_PACKAGE})
+endforeach()
+    
 KyDep(gflags
     GIT_REPOSITORY https://github.com/gflags/gflags.git
     GIT_TAG f8a0efe03aa69b3336d8e228b37d4ccb17324b88 # v2.2.0

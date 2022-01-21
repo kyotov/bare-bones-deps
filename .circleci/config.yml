@@ -1,5 +1,10 @@
 version: 2.1
 
+setup: true
+
+orbs:
+  continuation: circleci/continuation@0.1.2
+
 executors:
   kydeps-executor:
     docker:
@@ -7,105 +12,19 @@ executors:
         auth:
           username: mydockerhub-user
           password: $DOCKERHUB_PASSWORD
-          
-commands:
-  build-one:
-    parameters:
-      source-dir:
-        default: "~/src"
-        type: string
-      binary-dir:
-        default: "~/build"
-        type: string
-      extra-parameters:
-        default: ""
-        type: string
-    steps:
-      - run: cd <<parameters.source-dir>> && git submodule update --init --recursive
-      - run: mkdir -p <<parameters.binary-dir>>
-      - run: cd <<parameters.binary-dir>> && cmake -S <<parameters.source-dir>> -B . -D CMAKE_BUILD_TYPE=Debug <<parameters.extra-parameters>>
-      - run: cd <<parameters.binary-dir>> && cmake --build . --config Debug
-      - run: cd <<parameters.binary-dir>> && ./tests
 
-jobs:
-
-  build-simple:
-    executor: kydeps-executor
-    parameters:
-      source-dir:
-        default: "~/src"
-        type: string
-      binary-dir:
-        default: "~/build"
-        type: string
-      extra-parameters:
-        default: ""
-        type: string
-    working_directory: "~/src"
-    steps:
-      - checkout
-      - build-one:
-          source-dir: <<parameters.source-dir>>
-          binary-dir: <<parameters.binary-dir>>
-          extra-parameters: <<parameters.extra-parameters>>
-
-  build-and-persist:
+jobs:          
+  generate-build-universe:
     executor: kydeps-executor
     working_directory: "~/src"
     steps:
       - checkout
-      - build-one:
-          source-dir: "~/src/mode-3"
-          binary-dir: "~/build"
-          extra-parameters: "-D KYDEPS_CACHE=ON"
-      - persist_to_workspace:
-          root: "~/build/c"
-          paths: "*"
-  
-  build-by-reuse:
-    executor: kydeps-executor
-    working_directory: "~/src"
-    steps:
-      - checkout
-      - attach_workspace:
-          at: /tmp/bucket
-      - run: find /tmp/bucket
-      - run: cp /tmp/bucket/cache.cmake ~/src/mode-1/kydeps/cache.cmake
-      - build-one:
-          source-dir: "~/src/mode-1"
-          extra-parameters: "--log-level DEBUG -D KYDEPS_CACHE=ON -D KYDEPS_BUILD=OFF -D KYDEPS_CACHE_BUCKET=file:///tmp/bucket -D KYDEPS_LOG_LEVEL=DEBUG"
+      - run: cat ~/src/.circleci/universe.yml > universe.yml
+      - continuation/continue:
+          configuration_path: universe.yml
+
 
 workflows:
-
-  simple:
+  setup:
     jobs:
-      - build-simple:
-          source-dir: "~/src/mode-1"
-      - build-simple:
-          source-dir: "~/src/mode-2"
-      - build-simple:
-          source-dir: "~/src/mode-3"
-
-  remote:
-    jobs:
-      - build-and-persist
-      - build-by-reuse:
-          requires: 
-            - build-and-persist
-
-  all:
-    jobs:
-      - hold:
-          type: approval
-      # - build-simple:
-      #     source-dir: ~/src
-      #     extra-parameters: "-D KYDEPS_TARGETS=all"
-      #     requires:
-      #       - hold
-      - build-simple:
-          name: gflags
-          source-dir: "~/src/mode-1"
-          extra-parameters: "-D KYDEPS_BUILD_ONE_ENABLED=ON -D KYDEPS_TARGETS=gflags"
-          requires: 
-            - hold
-            
+      - generate-build-universe
